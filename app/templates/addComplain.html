@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+  <h3>Create Complain</h3>
+  <form
+    action="{% url 'add-complain' %}"
+    class="ui form"
+    enctype="multipart/form-data"
+    method="POST"
+  >
+    {% csrf_token %} {{form.as_p}}
+    <button name="update-btn" type="submit" class="ui button primary mt-1">
+      Create
+    </button>
+    <br />
+    <br />
+  </form>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+  document.getElementById("id_comment-box").required =true
+</script>
+{% endblock scripts %}

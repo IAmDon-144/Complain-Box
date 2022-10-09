@@ -1,0 +1,184 @@
+{% extends 'base.html' %} {% block content %} 
+{% for complain,status in complains %}
+
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="card-title">
+        <a href="{% url 'post-details' complain.id complain.title|slugify %}">
+          <h1>{{complain.title}}</h1>
+        </a>
+        <hr />
+      </div>
+      <div class="row">
+        <div class="col-md-7">
+          <p style="text-align: justify">
+            {{complain.description|slice:1250|safe}}....
+          </p>
+        </div>
+        <div class="col-md-5">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td>Author</td>
+                {% if complain.privacy == 'Public' %}
+                <td>{{complain.author.user.username}}</td>
+                {% else %}
+                <td>Anonymous <i class="lock icon"></i></td>
+                {% endif %}
+              </tr>
+              <tr>
+                <td>Author's Roll</td>
+                {% if complain.privacy == 'Public' %}
+                <td>{{complain.author.roll}}</td>
+                {% else %}
+                <td>Anonymous <i class="lock icon"></i></td>
+                {% endif %}
+              </tr>
+              <tr>
+                <td>Author's Department</td>
+                {% if complain.privacy == 'Public' %}
+                <td>{{complain.author.department}}</td>
+                {% else %}
+                <td>Anonymous <i class="lock icon"></i></td>
+                {% endif %}
+              </tr>
+              <tr>
+                <td>Complain Against</td>
+                <td>{{complain.complain_type}}</td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>{{status.type}}</td>
+              </tr>
+              <tr>
+                <td>Create At</td>
+                <td>{{complain.created_at}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <hr />
+      <form
+        action="{% url 'like-same' %}"
+        class="ui form"
+        enctype="multipart/form-data"
+        method="POST"
+        id="like-same-form"
+      >
+        {% csrf_token %}
+        <div class="ui labeled button" tabindex="0">
+          <div class="ui labeled button" tabindex="0">
+            {% if student %}
+            <button
+              class="ui red button like-same-btn"
+              type="submit"
+              name="like-btn"
+              value="liking-system"
+              id="like-{{complain.id}}-{{student}}-{{profile.id}}"
+            >
+              {% if profile not in complain.liked.all %} Like {% else %} Unlike
+              {% endif %}
+            </button>
+            {% else %}
+            <button
+            class="ui red button like-same-btn"
+            type="submit"
+            disabled
+          >
+            {% if profile not in complain.liked.all %} Like {% else %} Unlike
+            {% endif %}
+          </button>
+          {% endif %}
+ 
+            <a id="likesCount-{{complain.id}}" class="ui basic red left pointing label">
+              {{complain.liked.count}}
+            </a>
+          </div>
+        </div>
+        <div class="ui labeled button" tabindex="0">
+
+          {% if student %}
+   
+          <button
+            class="ui blue button like-same-btn"
+            type="submit"
+            name="same-btn"
+            value="same-system"
+            id="same-{{complain.id}}-{{student}}-{{profile.id}}"
+          >
+            {% if profile not in complain.same.all %} Same Complain {% else %}
+            Remove Same Complain {% endif %}
+          </button>
+          {% else %}
+          <button
+          class="ui blue button like-same-btn"
+          type="submit"
+          disabled
+        >
+          {% if profile not in complain.same.all %} Same Complain {% else %}
+          Remove Same Complain {% endif %}
+        </button>
+        {% endif %}
+          <a class="ui basic blue left pointing label" id="sameCount-{{complain.id}}">
+            {{complain.same.count}}</a
+          >
+        </div>
+        <button class="ui blue button" type="button">
+          <i class="comments icon"></i>
+          {{complain.CommentCount}}
+        </button>
+        <a href="{% url 'post-details' complain.id complain.title|slugify %}">
+          <button class="ui primary basic button" type="button">
+            Continue Reading
+          </button>
+        </a>
+      </form>
+
+      <div>
+        <form
+          id=""
+          action="{% url 'comment-post' complain.id %}"
+          method="POST"
+          class="ui form my-3"
+        >
+          {% csrf_token %}
+          <input
+            placeholder="Add Your Comment"
+            class="ui input"
+            type="text"
+            name="commnet-box"
+            id="id_comment-box"
+            style="max-width: 1070px"
+          />
+          {% if profile == "AnonymousUser" %}
+
+          <a href="{% url 'login-account' %}" type="button" class="ui primary button">
+            Add Comment Publicly
+          </a>
+          {% else %}
+          <button type="submit" name="submit_c_form" class="ui primary button">
+            Add Comment Publicly
+          </button>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+  <br />
+  <br />
+</div>
+
+{% endfor %}
+<a  id="ErrorLogin" href="{% url 'login-account' %}"><input type="hidden" id="ErrorbtnLogin"></input></a>
+
+{% endblock content %} {% block scripts %}
+
+<script>
+  document.getElementById("id_comment-box").required = true;
+</script>
+
+{% include 'likeSame.html' %}
+
+{% endblock scripts %}

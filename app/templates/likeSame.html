@@ -1,0 +1,58 @@
+<script>
+    $(document).ready(function () {
+      $(".like-same-btn").click(function (e) {
+        e.preventDefault();
+        let btnType = $(this).attr("name");
+        let btnID = $(this).attr("id");
+        let url = $("#like-same-form").attr("action");
+        let list = btnID.split("-");
+  
+        let likes = $(`#likesCount-${list[1]}`).text().trim();
+        let totalLikes = parseInt(likes);
+        let same = $(`#sameCount-${list[1]}`).text().trim();
+        let totalSame = parseInt(same);
+  
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: {
+            csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            postID: list[1],
+            profileType: list[2],
+            profileID: list[3],
+            btnType: btnType,
+          },
+          success: function (response) {
+
+            if (btnType === "like-btn") {
+              $(`#${btnID}`).text(response.lvalue);
+  
+              if (response.lvalue === "Like") {
+                totalLikes -= 1;
+  
+                $(`#likesCount-${list[1]}`).text(totalLikes);
+              } else {
+                totalLikes += 1;
+
+                $(`#likesCount-${list[1]}`).text(totalLikes);
+              }
+            } else {
+              $(`#${btnID}`).text(response.svalue);
+              if (response.svalue === "Same Complain") {
+                totalSame -= 1;
+  
+                $(`#sameCount-${list[1]}`).text(totalSame);
+              } else {
+                totalSame += 1;
+  
+                $(`#sameCount-${list[1]}`).text(totalSame);
+              }
+            }
+          },
+          error: function (response) {
+            $("#ErrorbtnLogin").click();
+          },
+        });
+      });
+    });
+  </script>

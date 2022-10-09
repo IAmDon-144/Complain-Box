@@ -1,0 +1,35 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container">
+  <form
+    action="{% url 'post-delete' complain.id complain.title|slugify %}"
+    method="POST"
+  >
+  {% csrf_token %}
+    <div class="card">
+      <div class="card-body">
+        <div class="card-title">
+          <h1 style="color: red">
+            Are You Sure to Delete '{{compalin.title}}'
+          </h1>
+          <p style="color: red" style="color: red">
+            Once You Delete it ,It Can't be UNDO
+          </p>
+        </div>
+
+        <button
+          class="small ui red basic button"
+          type="submit"
+          name="deletePost"
+        >
+          <i class="trash icon"></i>Confirm Delete
+        </button>
+
+        <a href="{% url 'post-details' complain.id complain.title|slugify %}">
+          <button class="small ui green basic button my-3" type="button">No,Keep it</button>
+        </a>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock content %}

@@ -1,0 +1,257 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <div class="card-title">
+        <h1>{{complain.title}}</h1>
+        <hr />
+      </div>
+      <div class="row">
+        <div class="col-md-7">
+          <p style="text-align: justify">{{complain.description|safe}}</p>
+        </div>
+        <div class="col-md-5">
+          <h4>Complain Overview:</h4>
+
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td>Author</td>
+                {% if complain.privacy == 'Public' %}
+                <td>
+                  <span>
+                    <a href="{% url 'get-profile' complain.author.id 's' %}">
+                      <img
+                        class="rounded-circle article-img mx-1"
+                        style="height: 25px; width: 25px"
+                        src="{{complain.author.avatar.url}}"
+                      />
+
+                      {{complain.author.user.username}}
+                    </a>
+                  </span>
+                </td>
+                {% else %}
+                <td>Anonymous <i class="lock icon"></i></td>
+                {% endif %}
+              </tr>
+              <tr>
+                <td>Author's Roll</td>
+                {% if complain.privacy == 'Public' %}
+                <td>{{complain.author.roll}}</td>
+                {% else %}
+                <td>Anonymous <i class="lock icon"></i></td>
+                {% endif %}
+              </tr>
+              <tr>
+                <td>Author's Department</td>
+                {% if complain.privacy == 'Public' %}
+                <td>{{complain.author.department}}</td>
+                {% else %}
+                <td>Anonymous <i class="lock icon"></i></td>
+                {% endif %}
+              </tr>
+              <tr>
+                <td>Complain Against</td>
+                <td>{{complain.complain_type}}</td>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td>
+                  {{status}} {% if student %} {% else%} -
+                  <a
+                    href="{% url 'status-edit' complain.id student profile.id %}"
+                  >
+                    <i class="edit icon"></i>Edit {% endif %}
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td>Create At</td>
+                <td>{{complain.created_at}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <hr />
+          <h4>Suggestions:</h4>
+          {% for suggestion in suggestions %}
+          <ul>
+            <li>{{suggestion}}</li>
+          </ul>
+          {% endfor %}
+
+          <hr />
+          <h4>Comments({{allCommnets|length}}):</h4>
+
+          {% if allCommnets|length > 0 %} {% for comment,type in allCommnets %}
+          <div class="ui comments">
+            <div class="comment">
+              <a class="avatar">
+                <img src="{{comment.user.avatar.url}}" />
+              </a>
+              <div class="content">
+                <a
+                  class="author"
+                  href="{% url 'get-profile' comment.user.id type %}"
+                  >{{comment.user.user.username}}</a
+                >
+                <div class="metadata">
+                  <div class="date">{{comment.created}}</div>
+                </div>
+                <div class="text">
+                  <p>
+                    {{comment.body}} {% if profile == comment.user %}
+
+                    <a
+                      href="{% url 'delete-comment' comment.id type complain.id %}"
+                    >
+                      <i class="red trash icon"></i>
+                    </a>
+
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <div>
+            <p style="text-align: center">Be the First One to do Comment</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <div>
+        <hr />
+        <form
+          action="{% url 'like-same' %}"
+          class="ui form"
+          enctype="multipart/form-data"
+          method="POST"
+          id="like-same-form"
+        >
+          {% csrf_token %}
+
+          <div class="ui labeled button" tabindex="0">
+            <div class="ui labeled button" tabindex="0">
+              {% if student %}
+              <button
+                class="ui red button like-same-btn"
+                type="submit"
+                name="like-btn"
+                value="liking-system"
+                id="like-{{complain.id}}-{{student}}-{{profile.id}}"
+              >
+                {% if profile not in complain.liked.all %} Like {% else %}
+                Unlike {% endif %}
+              </button>
+              {% else %}
+              <button
+                class="ui red button like-same-btn"
+                type="submit"
+                disabled
+              >
+                {% if profile not in complain.liked.all %} Like {% else %}
+                Unlike {% endif %}
+              </button>
+              {% endif %}
+
+              <a
+                id="likesCount-{{complain.id}}"
+                class="ui basic red left pointing label"
+              >
+                {{complain.liked.count}}
+              </a>
+            </div>
+          </div>
+          <div class="ui labeled button" tabindex="0">
+            {% if student %}
+
+            <button
+              class="ui blue button like-same-btn"
+              type="submit"
+              name="same-btn"
+              value="same-system"
+              id="same-{{complain.id}}-{{student}}-{{profile.id}}"
+            >
+              {% if profile not in complain.same.all %} Same Complain {% else %}
+              Remove Same Complain {% endif %}
+            </button>
+            {% else %}
+            <button class="ui blue button like-same-btn" type="submit" disabled>
+              {% if profile not in complain.same.all %} Same Complain {% else %}
+              Remove Same Complain {% endif %}
+            </button>
+            {% endif %}
+            <a
+              class="ui basic blue left pointing label"
+              id="sameCount-{{complain.id}}"
+            >
+              {{complain.same.count}}</a
+            >
+          </div>
+          <button class="ui blue button">
+            <i class="comments icon"></i>
+            {{complain.CommentCount}}
+          </button>
+          {% if profile == complain.author %}
+
+          <a href="{% url 'edit-post' complain.id complain.title|slugify %}">
+            <button class="small ui blue basic button" type="button">
+              <i class="edit icon"></i>Edit
+            </button>
+          </a>
+          <a href="{% url 'post-delete' complain.id complain.title|slugify %}">
+            <button class="small ui red basic button" type="button">
+              <i class="trash icon"></i>Delete
+            </button>
+          </a>
+          {% endif %}
+        </form>
+      </div>
+      <div>
+        <form
+          id=""
+          action="{% url 'comment-post' complain.id %}"
+          method="POST"
+          class="ui form my-3"
+        >
+          {% csrf_token %}
+          <input
+            placeholder="Add Your Comment"
+            class="ui input"
+            id="id_comment-box"
+            type="text"
+            name="commnet-box"
+            style="max-width: 1070px"
+          />
+          {% if profile == "AnonymousUser" %}
+          <a
+            href="{% url 'login-account' %}"
+            type="button"
+            class="ui primary button"
+          >
+            Add Comment Publicly
+          </a>
+          {% else %}
+          <button type="submit" name="submit_c_form" class="ui primary button">
+            Add Comment Publicly
+          </button>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+  <br />
+  <br />
+</div>
+
+<a  id="ErrorLogin" href="{% url 'login-account' %}"><input type="hidden" id="ErrorbtnLogin"></input></a>
+
+{% endblock content %} {% block scripts %}
+<script>
+  document.getElementById("id_comment-box").required = true;
+</script>
+
+{% include 'likeSame.html' %} {% endblock scripts %}

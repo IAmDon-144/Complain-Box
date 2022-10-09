@@ -1,0 +1,125 @@
+{% extends 'base.html' %} {% block content%}
+
+<div class="container" style="width: 880px">
+  {% if student %}
+  <div class="card">
+    <img
+      class="rounded-circle article-img mx-auto d-block my-2"
+      style="height: 150px; width: 150px"
+      src="{{profile.avatar.url}}"
+    />
+    <div class="card-title">
+      <h1 style="text-align: center">
+        {{profile.user.username}}
+      </h1>
+    </div>
+    <p1 style="text-align: center">{{profile.user.email}}</p1>
+    <p1 style="text-align: center">{{profile.user.created_at}}(Joined)</p1>
+
+    <div class="mx-2">
+      <hr />
+      <p style="text-align: center">Personal Details:</p>
+      <table class="table table-bordered" style="text-align: center">
+        <tbody>
+          <tr>
+            <td>First Name</td>
+            <td>{{profile.first_name}}</td>
+          </tr>
+          <tr>
+            <td>Last Name</td>
+            <td>{{profile.last_name}}</td>
+          </tr>
+          <tr>
+            <td>Department</td>
+            <td>{{profile.department}}</td>
+          </tr>
+          <tr>
+            <td>Roll</td>
+            <td>{{profile.roll}}</td>
+          </tr>
+          <tr>
+            <td>Year</td>
+            <td>{{profile.year}}</td>
+          </tr>
+          <tr>
+            <td>Section</td>
+            <td>{{profile.section}}</td>
+          </tr>
+          <tr>
+            <td>Phone Number</td>
+            <td>+{{profile.phoneNum}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <hr />
+      <p style="text-align: center">Guardian Details:</p>
+      <table class="table table-bordered" style="text-align: center">
+        <tbody>
+          <tr>
+            <td>Father's Name</td>
+            <td>{{profile.fathersName}}</td>
+          </tr>
+          <tr>
+            <td>Father's Phone</td>
+            <td>+{{profile.fathersNum}}</td>
+          </tr>
+          <tr>
+            <td>Mother's Name</td>
+            <td>{{profile.mothersName}}</td>
+          </tr>
+          <tr>
+            <td>Mother's Phone</td>
+            <td>+{{profile.mothersNum}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <br />
+  {% else %}
+  <div class="card">
+    <img
+      class="rounded-circle article-img mx-auto d-block my-2"
+      style="height: 150px; width: 150px"
+      src="{{profile.avatar.url}}"
+    />
+    <div class="card-title">
+      <h1 style="text-align: center">{{profile.user.username}}</h1>
+    </div>
+    <p1 style="text-align: center">{{profile.user.email}}</p1>
+    <p1 style="text-align: center">{{profile.user.created_at}}(Joined)</p1>
+
+    <div class="mx-2">
+      <hr />
+      <p style="text-align: center">Personal Details:</p>
+      <table class="table table-bordered" style="text-align: center">
+        <tbody>
+          <tr>
+            <td>First Name</td>
+            <td>{{profile.first_name}}</td>
+          </tr>
+          <tr>
+            <td>Last Name</td>
+            <td>{{profile.last_name}}</td>
+          </tr>
+          <tr>
+            <td>Department</td>
+            <td>{{profile.department}}</td>
+          </tr>
+          <tr>
+            <td>Position</td>
+            <td>{{profile.position}}</td>
+          </tr>
+          <tr>
+            <td>Phone Number</td>
+            <td>+880{{profile.mobile}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <br />
+  {% endif %}
+</div>
+
+{% endblock content%}
